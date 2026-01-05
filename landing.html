@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AttendX - Smart Attendance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0e4a95;
+            --light-blue: #3b82f6;
+            --lighter-blue: #60a5fa;
+            --lightest-blue: #dbeafe;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --gray: #64748b;
+            --dark: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--white);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            border-radius: 6px;
+            border: 2px solid var(--light-gray);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--light-blue) 0%, var(--lighter-blue) 100%);
+        }
+
+        /* Firefox Scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-blue) var(--light-gray);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-brand i {
+            font-size: 1.75rem;
+        }
+
+        .nav-link {
+            color: var(--gray);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .btn-login {
+            background: var(--white);
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 74, 149, 0.3);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            padding: 140px 0 80px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-gray) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title .highlight {
+            color: var(--primary-blue);
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-blue);
+            color: var(--white);
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(14, 74, 149, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            background: #0a3a75;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(14, 74, 149, 0.4);
+        }
+
+        .btn-secondary-custom {
+            background: var(--white);
+            color: var(--primary-blue);
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary-custom:hover {
+            background: var(--lightest-blue);
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 600px;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--light-blue));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-blue);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--lightest-blue) 0%, #bfdbfe 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+        }
+
+        .feature-icon i {
+            font-size: 2rem;
+            color: var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon i {
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: var(--white);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* How It Works Section */
+        .how-it-works-section {
+            padding: 80px 0;
+            background: var(--light-gray);
+        }
+
+        .step-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(14, 74, 149, 0.3);
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            color: var(--gray);
+            line-height: 1.6;
+        }
+
+        /* Hardware Section */
+        .hardware-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .hardware-card {
+            background: var(--white);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .hardware-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-blue);
+        }
+
+        .hardware-image {
+            width: 100%;
+            height: 200px;
+            background: var(--light-gray);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hardware-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+        }
+
+        .hardware-image i {
+            font-size: 4rem;
+            color: var(--primary-blue);
+        }
+
+        .hardware-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .hardware-description {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .hardware-badge {
+            display: inline-block;
+            background: var(--lightest-blue);
+            color: var(--primary-blue);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* Technology Section */
+        .technology-section {
+            padding: 80px 0;
+            background: var(--light-gray);
+        }
+
+        .tech-card {
+            background: var(--white);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-blue);
+        }
+
+        .tech-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--lightest-blue) 0%, #bfdbfe 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover .tech-icon {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+        }
+
+        .tech-icon i {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            transition: all 0.3s ease;
+        }
+
+        .tech-card:hover .tech-icon i {
+            color: var(--white);
+            transform: scale(1.1);
+        }
+
+        .tech-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-version {
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .tech-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .cta-card {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            border-radius: 24px;
+            padding: 4rem;
+            text-align: center;
+            color: var(--white);
+            box-shadow: 0 20px 40px rgba(14, 74, 149, 0.2);
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn-cta {
+            background: var(--white);
+            color: var(--primary-blue);
+            padding: 1rem 3rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--white);
+            color: var(--dark);
+            padding: 3rem 0 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-blue);
+        }
+
+        .footer-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .footer-link {
+            color: var(--gray);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #e5e7eb;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            color: var(--gray);
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 80px 0;
+            background: var(--white);
+        }
+
+        .team-card {
+            background: var(--white);
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-blue);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--lightest-blue) 0%, #bfdbfe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-blue);
+            border: 4px solid var(--white);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover .team-avatar {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--light-blue) 100%);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+
+        .team-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: var(--primary-blue);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .team-description {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .team-social-link {
+            width: 36px;
+            height: 36px;
+            background: var(--light-gray);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .team-social-link:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="/images/logo-attendx.png" alt="AttendX Logo" style="height: 40px; margin-right: 10px;">
+                AttendX
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Fitur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">Cara Kerja</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#hardware">Hardware</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#technology">Teknologi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#team">Tim</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">Tentang</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content">
+                    <h1 class="hero-title">
+                        Sistem Absensi <span class="highlight">Cerdas</span> dengan Teknologi Biometrik
+                    </h1>
+                    <p class="hero-subtitle">
+                        AttendX menghadirkan solusi absensi modern menggunakan pengenalan wajah dan sidik jari untuk keamanan dan kemudahan maksimal.
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="#features" class="btn btn-secondary-custom">
+                            <i class="fas fa-info-circle me-2"></i>Pelajari Lebih Lanjut
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center mt-5 mt-lg-0">
+                    <div class="hero-image">
+                        <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Illustration placeholder -->
+                            <rect x="50" y="50" width="400" height="300" rx="20" fill="#dbeafe"/>
+                            <circle cx="250" cy="150" r="50" fill="#0e4a95"/>
+                            <rect x="150" y="220" width="200" height="10" rx="5" fill="#60a5fa"/>
+                            <rect x="180" y="250" width="140" height="10" rx="5" fill="#93c5fd"/>
+                            <rect x="200" y="280" width="100" height="10" rx="5" fill="#bfdbfe"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Fitur Unggulan</h2>
+            <p class="section-subtitle">Teknologi terdepan untuk sistem absensi yang efisien dan aman</p>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-face-smile"></i>
+                        </div>
+                        <h3 class="feature-title">Face Recognition</h3>
+                        <p class="feature-description">
+                            Teknologi pengenalan wajah canggih dengan akurasi tinggi untuk verifikasi identitas yang cepat dan aman.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h3 class="feature-title">Fingerprint Scanner</h3>
+                        <p class="feature-description">
+                            Sistem sidik jari terintegrasi untuk keamanan berlapis dan mencegah kecurangan absensi.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="feature-title">Real-time Tracking</h3>
+                        <p class="feature-description">
+                            Pantau kehadiran secara real-time dengan dashboard yang informatif dan mudah dipahami.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Laporan Lengkap</h3>
+                        <p class="feature-description">
+                            Generate laporan kehadiran dengan berbagai format dan filter sesuai kebutuhan Anda.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Keamanan Tinggi</h3>
+                        <p class="feature-description">
+                            Data biometrik terenkripsi dengan standar keamanan tinggi untuk melindungi privasi pengguna.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Responsive Design</h3>
+                        <p class="feature-description">
+                            Akses dari berbagai perangkat dengan tampilan yang optimal di desktop, tablet, dan mobile.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">Cara Kerja</h2>
+            <p class="section-subtitle">Proses absensi yang mudah dan cepat dalam 3 langkah</p>
+            
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <h3 class="step-title">Scan Sidik Jari</h3>
+                        <p class="step-description">
+                            Letakkan jari Anda pada sensor sidik jari untuk verifikasi identitas awal.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <h3 class="step-title">Verifikasi Wajah</h3>
+                        <p class="step-description">
+                            Hadapkan wajah Anda ke kamera untuk verifikasi berlapis yang lebih aman.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <h3 class="step-title">Selesai!</h3>
+                        <p class="step-description">
+                            Absensi tercatat otomatis dan Anda akan menerima konfirmasi kehadiran.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hardware Section -->
+    <section class="hardware-section" id="hardware">
+        <div class="container">
+            <h2 class="section-title">Hardware yang Digunakan</h2>
+            <p class="section-subtitle">Perangkat keras yang digunakan</p>
+            
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="hardware-card">
+                        <div class="hardware-image">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <h3 class="hardware-name">Sensor Fingerprint</h3>
+                        <p class="hardware-description">
+                            Sensor sidik jari optik dengan akurasi tinggi untuk verifikasi identitas yang cepat dan aman.
+                        </p>
+                        <span class="hardware-badge">Biometric</span>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="hardware-card">
+                        <div class="hardware-image">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3 class="hardware-name">ESP32 DevKit V1</h3>
+                        <p class="hardware-description">
+                            Mikrokontroler dengan WiFi dan Bluetooth terintegrasi untuk konektivitas dan pemrosesan data.
+                        </p>
+                        <span class="hardware-badge">Microcontroller</span>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="hardware-card">
+                        <div class="hardware-image">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h3 class="hardware-name">Webcam</h3>
+                        <p class="hardware-description">
+                            Kamera HD untuk face recognition dengan kualitas gambar jernih dan frame rate tinggi.
+                        </p>
+                        <span class="hardware-badge">Camera</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology-section" id="technology">
+        <div class="container">
+            <h2 class="section-title">Teknologi yang Digunakan</h2>
+            <p class="section-subtitle">Stack teknologi modern untuk sistem yang handal dan scalable</p>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fab fa-laravel"></i>
+                        </div>
+                        <h3 class="tech-name">Laravel</h3>
+                        <p class="tech-version">Version 12.0</p>
+                        <p class="tech-description">
+                            Framework PHP modern untuk backend yang robust dan scalable.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="tech-name">ArcFace</h3>
+                        <p class="tech-version">Deep Learning</p>
+                        <p class="tech-description">
+                            Model AI untuk face recognition dengan akurasi tinggi dan performa optimal.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3 class="tech-name">RetinaFace</h3>
+                        <p class="tech-version">Face Detector</p>
+                        <p class="tech-description">
+                            Detector wajah canggih untuk deteksi yang cepat dan akurat dalam berbagai kondisi.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-3">
+                    <div class="tech-card">
+                        <div class="tech-icon">
+                            <i class="fab fa-python"></i>
+                        </div>
+                        <h3 class="tech-name">FastAPI</h3>
+                        <p class="tech-version">Python Framework</p>
+                        <p class="tech-description">
+                            Framework Python untuk API server yang cepat dan efisien dalam pemrosesan AI.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section" id="team"></section>
+        <div class="container">
+            <h2 class="section-title">Tim Pengembang</h2>
+            <p class="section-subtitle">Orang-orang di balik AttendX</p>
+            
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Wafi Muhammad Zain</h3>
+                        <p class="team-role">Full Stack Developer & Hardware</p>
+                        <!-- <p class="team-description">
+                            Memimpin tim dan mengelola seluruh aspek pengembangan proyek AttendX.
+                        </p> -->
+                        <div class="team-social">
+                            <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Marzuq Jangkaru Bhakti Samudra</h3>
+                        <p class="team-role">Full Stack Developer</p>
+                        <!-- <p class="team-description">
+                            Mengembangkan frontend dan backend sistem dengan teknologi modern.
+                        </p> -->
+                        <div class="team-social">
+                            <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Raihan Arya Pratama</h3>
+                        <p class="team-role">AI Engineer</p>
+                        <!-- <p class="team-description">
+                            Fokus pada pengembangan algoritma face recognition dan machine learning.
+                        </p> -->
+                        <div class="team-social">
+                            <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Miqdad Azzam Fawazy</h3>
+                        <p class="team-role">Backend Developer</p>
+                        <!-- <p class="team-description">
+                            Bertanggung jawab atas arsitektur sistem dan keamanan database.
+                        </p> -->
+                        <div class="team-social">
+                            <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Muhammad Dinar Matin Nugraha</h3>
+                        <p class="team-role">UI/UX Designer</p>
+                        <!-- <p class="team-description">
+                            Merancang antarmuka yang intuitif dan pengalaman pengguna yang optimal.
+                        </p> -->
+                        <div class="team-social">
+                           <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Sabrina Anastasya Andina Putri</h3>
+                        <p class="team-role">Hardware Engineer</p>
+                        <!-- <p class="team-description">
+                            Mengintegrasikan perangkat biometrik dan sensor dengan sistem.
+                        </p> -->
+                        <div class="team-social">
+                            <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="team-card">
+                        <div class="team-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="team-name">Ratu Fadilla Na'im</h3>
+                        <p class="team-role">QA Engineer</p>
+                        <!-- <p class="team-description">
+                            Memastikan kualitas sistem melalui testing dan quality assurance.
+                        </p> -->
+                        <div class="team-social">
+                            <a href="#" class="team-social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="team-social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-card">
+                <h2 class="cta-title">Siap Memulai?</h2>
+                <p class="cta-subtitle">
+                    Bergabunglah dengan ribuan pengguna yang telah merasakan kemudahan AttendX
+                </p>
+                <a href="/attendance.html" class="btn btn-cta">
+                    <i class="fas fa-rocket me-2"></i>Mulai Sekarang
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="about"></footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <div class="footer-brand">
+                        <img src="/images/logo-attendx.png" alt="AttendX Logo" style="height: 40px; margin-right: 10px;">
+                        AttendX
+                    </div>
+                    <p class="footer-description">
+                        Sistem absensi cerdas dengan teknologi biometrik untuk keamanan dan kemudahan maksimal.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="team-social-link" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 col-6 mb-4 mb-lg-0">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <a href="#features" class="footer-link">Fitur</a>
+                    <a href="#how-it-works" class="footer-link">Cara Kerja</a>
+                    <a href="#hardware" class="footer-link">Hardware</a>
+                    <a href="#technology" class="footer-link">Teknologi</a>
+                    <a href="#team" class="footer-link">Tim</a>
+                </div>
+                
+                <div class="col-lg-2 col-md-4 col-6 mb-4 mb-lg-0">
+                    <h4 class="footer-title">Fitur Utama</h4>
+                    <a href="#features" class="footer-link">Face Recognition</a>
+                    <a href="#features" class="footer-link">Fingerprint</a>
+                    <a href="#features" class="footer-link">Real-time</a>
+                    <a href="#features" class="footer-link">Laporan</a>
+                    <a href="#features" class="footer-link">Keamanan</a>
+                </div>
+                
+                <div class="col-lg-4 col-md-4">
+                    <h4 class="footer-title">Tentang Proyek</h4>
+                    <p class="footer-description" style="margin-bottom: 0.5rem;">
+                        Sistem absensi biometrik untuk efisiensi dan keamanan pencatatan kehadiran.
+                    </p>
+                    <p class="footer-description" style="margin-bottom: 0; font-size: 0.85rem;">
+                        <strong>Tech Stack:</strong> Laravel 12, ArcFace, RetinaFace, ESP32
+                    </p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 AttendX. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
